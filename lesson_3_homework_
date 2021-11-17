@@ -1,0 +1,48 @@
+--схема БД: https://docs.google.com/document/d/1NVORWgdwlKepKq_b8SPRaSpraltxoMg2SIusTEN6mEQ/edit?usp=sharing
+
+--task1
+--Корабли: Для каждого класса определите число кораблей этого класса, потопленных в сражениях. Вывести: класс и число потопленных кораблей.
+---Анализ:
+with sunked_ship as
+(
+select classes.class, ships.name
+from classes
+join ships
+on classes.class = ships.class
+join outcomes
+on ships.name = outcomes.ship 
+where outcomes.result = 'sunk' 
+)
+
+--task2
+--Корабли: Для каждого класса определите год, когда был спущен на воду первый корабль этого класса. Если год спуска на воду головного корабля неизвестен, определите минимальный год спуска на воду кораблей этого класса. Вывести: класс, год.
+
+
+--task3
+--Корабли: Для классов, имеющих потери в виде потопленных кораблей и не менее 3 кораблей в базе данных, вывести имя класса и число потопленных кораблей.
+
+
+--task4
+--Корабли: Найдите названия кораблей, имеющих наибольшее число орудий среди всех кораблей такого же водоизмещения (учесть корабли из таблицы Outcomes).
+
+
+--task5
+--Компьютерная фирма: Найдите производителей принтеров, которые производят ПК с наименьшим объемом RAM и с самым быстрым процессором среди всех ПК, имеющих наименьший объем RAM. Вывести: Maker
+Анализ:
+with pc_min_ram as
+(
+select * 
+from pc 
+where ram = (select min(ram) from pc)
+ ),
+ (
+select product.maker
+from pc_min_ram
+join
+product on pc_min_ram.model = product.model
+where speed = (select max(speed) from pc_min_ram)
+)
+select product.maker
+from printer
+join product on printer.model = product.model 
+where product.maker in (select * from pc_min_ram)
